@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+p,
+h1,
+div {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #011;
+}
+
+p,
+a,
+h1 {
+    color: #fff;
+}
+
+span {
+    color: crimson;
+}
