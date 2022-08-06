@@ -6,9 +6,9 @@
            </div> 
         </div>
         <div class="message">
-            <p v-if="!displayMessage && !isDraw">Player <span>{{Number(this.swapPlayer) + 1}}</span>'s turn</p>
-            <p v-else-if="displayMessage">Player <span>{{Number(this.swapPlayer) + 1}}</span>  won!!</p>
-            <p v-else-if="isDraw">Draw</p>
+            <p v-if="!displaySuccessMessage && !isDraw">Player <span>{{Number(this.swapPlayer) + 1}}</span>'s turn</p>
+             <p v-if="displaySuccessMessage" class="success">Player <span>{{Number(!this.swapPlayer) + 1}}</span>  won!!</p>
+                <p v-else-if="isDraw" class="draw">Draw</p>
             <button class="btn btn-reset" @click="resetBoard">Reset</button>
         </div>
     </div>
@@ -25,31 +25,19 @@ export default {
         return {
             board: new Board().cells,
             swapPlayer: false,
-            displayMessage: false,
+            displaySuccessMessage: false,
+            isValid: true
         }
     },
     computed: {
          isDraw() {
-            const movesLeft = [];
-            let count = 0;
-            for(let i=0; i <3; i++) {
-                for(let j=0; j<3; j++) {
-                    console.log(i, j)
-                    if(this.board[i][j] == '') 
-                    {
-                        ++count;
-                        movesLeft.push(count);
-                        
-                    }
-                }
-            }
-            return movesLeft.length === 0;
+            return this.board.flat().filter((value) => value==='').length === 0;
         }
     },
     methods: {
         gotoCell(a, b) {
             if(this.isGameOver()) {return;}
-            if(this.board[a][b] != '') { return; }
+            if(this.board[a][b] != '') { return this.isValid = false; }
             this.swapPlayer = !this.swapPlayer;
             const player = Number(this.swapPlayer) == 1 ? "x" :"o";
             if(player == "x") {
@@ -57,15 +45,15 @@ export default {
             }else {
                  this.board[a][b] = "o";
             }
-            const wininingMove = this.isAWiningMove(player);
-            if(wininingMove) {
-                this.displayMessage = true;
+            
+            if(this.isAWiningMove(player)) {
+                this.displaySuccessMessage = true;
             }
         },
         resetBoard() {
             this.board = new Board().cells
             this.swapPlayer = false;
-            this.displayMessage = false;
+            this.displaySuccessMessage = false;
         },
         isAWiningMove(player){
            /*   Horizontal rows  */
@@ -82,8 +70,7 @@ export default {
             return false;
         },
         isGameOver() {
-            if(this.displayMessage) {return true;}
-            if(this.isDraw){return true;}
+            if(this.displaySuccessMessage || this.isDraw) {return true;}
         },
     }
 }
@@ -110,7 +97,8 @@ export default {
     gap: 40px;
 }
 .btn {
-      padding: 10px 35px;
+    padding: 10px 20px;
+    min-width: 150px;
     font-size: 1.4rem;
     border-radius: 10px;
     background: transparent;
@@ -124,5 +112,13 @@ export default {
     background: crimson;
     color: #000;
     border: 1px solid #fff;
+}
+.success{
+    color: rgb(54 213 54);
+    font-size: 2rem;
+}
+.draw {
+    color: rgb(178 26 56);
+    font-size: 2rem;
 }
 </style>
